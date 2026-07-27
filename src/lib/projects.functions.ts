@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getDb } from "@/lib/db";
-import { requireAdmin } from "@/lib/auth.functions";
+import { requireAdmin } from "@/lib/auth.server";
 import {
   type Project,
   type ProjectCategory,
