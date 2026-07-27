@@ -5,7 +5,7 @@ import { PROJECT_CATEGORIES, type Project, type ProjectCategory } from "@/lib/pr
 type Props = {
   project: Project;
   index: number;
-  isOwner?: boolean;
+  isAdmin?: boolean;
   onEdit: (project: Project) => void;
   onDelete: (project: Project) => void;
 };
@@ -58,7 +58,7 @@ function CategoryBadge({ category }: { category: ProjectCategory }) {
   );
 }
 
-export function ProjectCard({ project, index, isOwner, onEdit, onDelete }: Props) {
+export function ProjectCard({ project, index, isAdmin, onEdit, onDelete }: Props) {
   const target = project.liveUrl || project.githubUrl || "";
   const favicon = project.liveUrl ? faviconUrl(project.liveUrl) : null;
   const cover =
@@ -138,7 +138,7 @@ export function ProjectCard({ project, index, isOwner, onEdit, onDelete }: Props
             <CategoryBadge category={project.category} />
           </div>
 
-          {isOwner ? (
+          {isAdmin ? (
             <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
               <button
                 type="button"

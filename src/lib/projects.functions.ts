@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getDb } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth.functions";
 import {
   type Project,
   type ProjectCategory,
@@ -68,6 +69,7 @@ const projectInputSchema = (data: unknown) => {
 export const createProject = createServerFn({ method: "POST" })
   .validator(projectInputSchema)
   .handler(async ({ data }) => {
+    requireAdmin();
     const db = await getDb();
     const id = createId();
     const createdAt = Date.now();
@@ -100,6 +102,7 @@ export const updateProject = createServerFn({ method: "POST" })
     return { id: d.id, ...projectInputSchema(d) };
   })
   .handler(async ({ data }) => {
+    requireAdmin();
     const db = await getDb();
     const techJson = JSON.stringify(data.tech);
 
@@ -122,6 +125,7 @@ export const deleteProject = createServerFn({ method: "POST" })
     return data;
   })
   .handler(async ({ data: id }) => {
+    requireAdmin();
     const db = await getDb();
     await db.query("DELETE FROM projects WHERE id = $1", [id]);
     return { id };

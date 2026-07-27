@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Download, LogIn, LogOut, Plus, Search, Upload } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { Download, LogOut, Plus, Search, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,6 +19,7 @@ import { ProjectCard } from "@/components/vault/project-card";
 import { ProjectFormModal } from "@/components/vault/project-form-modal";
 import { VaultFooter } from "@/components/vault/vault-footer";
 import { useProjects } from "@/hooks/use-projects";
+import { useAdmin } from "@/hooks/use-admin";
 import {
   PROJECT_CATEGORIES,
   sanitizeProject,
@@ -47,14 +48,12 @@ export const Route = createFileRoute("/")({
 function VaultPage() {
   const { projects, loaded, error, addProject, updateProject, deleteProject, replaceAll } =
     useProjects();
+  const { isAdmin, isLoading: checkingAdmin, logout } = useAdmin();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<ProjectCategory | "all">("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Project | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Project | null>(null);
-  const [user, setUser] = useState<{ email?: string } | null>({ email: "local@vault" });
-  const [checkingUser, setCheckingUser] = useState(false);
-  const isOwner = true;
   const searchRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -78,13 +77,13 @@ function VaultPage() {
           target.tagName === "TEXTAREA" ||
           target.isContentEditable);
 
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "n") {
+      if (isAdmin && (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "n") {
         event.preventDefault();
         openCreate();
         return;
       }
       if (typing || event.metaKey || event.ctrlKey || event.altKey) return;
-      if (event.key.toLowerCase() === "n") {
+      if (isAdmin && event.key.toLowerCase() === "n") {
         event.preventDefault();
         openCreate();
       } else if (event.key === "/") {
@@ -94,20 +93,17 @@ function VaultPage() {
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [isAdmin]);
 
   function openCreate() {
-    if (!isOwner) {
-      toast.info("Sign in to add projects");
-      return;
-    }
+    if (!isAdmin) return;
     setEditing(null);
     setModalOpen(true);
   }
 
   function handleSubmit(data: Omit<Project, "id" | "createdAt">) {
-    if (!isOwner) {
-      toast.info("Sign in to manage projects");
+    if (!isAdmin) {
+      toast.error("Admin access required");
       return;
     }
     if (editing) {
@@ -120,8 +116,9 @@ function VaultPage() {
     setEditing(null);
   }
 
-  async function handleSignOut() {
-    toast.success("local vault active");
+  function handleSignOut() {
+    logout();
+    toast.success("signed out");
   }
 
   function handleExport() {
@@ -162,24 +159,18 @@ function VaultPage() {
                 &gt; project_vault /<span className="animate-blink ml-1">_</span>
               </h1>
               <p className="mt-2 text-sm text-muted-foreground">
-                Every project link in one place. Public for friends to view, sign in to manage.
+                Every project link in one place. A public vault for friends to browse.
               </p>
             </div>
             <div className="shrink-0">
-              {checkingUser ? null : isOwner ? (
+              {checkingAdmin ? null : isAdmin ? (
                 <div className="flex items-center gap-2">
-                  <span className="hidden text-xs text-muted-foreground sm:inline">{user?.email}</span>
+                  <span className="hidden text-xs text-muted-foreground sm:inline">admin</span>
                   <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-1.5">
                     <LogOut className="size-4" /> sign out
                   </Button>
                 </div>
-              ) : (
-                <Button variant="outline" size="sm" asChild className="gap-1.5">
-                  <Link to="/auth">
-                    <LogIn className="size-4" /> sign in
-                  </Link>
-                </Button>
-              )}
+              ) : null}
             </div>
           </div>
 
@@ -219,7 +210,7 @@ function VaultPage() {
               <Button variant="outline" onClick={handleExport} className="gap-2">
                 <Download className="size-4" /> export
               </Button>
-              {isOwner ? (
+              {isAdmin ? (
                 <>
                   <Button variant="outline" onClick={() => fileRef.current?.click()} className="gap-2">
                     <Upload className="size-4" /> import
@@ -254,7 +245,7 @@ function VaultPage() {
             <div className="rounded-md border border-dashed border-border p-12 text-center">
               <p className="text-sm text-muted-foreground">
                 {projects.length === 0
-                  ? isOwner
+                  ? isAdmin
                     ? "$ vault is empty — add your first project."
                     : "$ vault is empty — check back later."
                   : `$ no projects match "${query}"`}
@@ -267,7 +258,7 @@ function VaultPage() {
                   key={project.id}
                   project={project}
                   index={index}
-                  isOwner={isOwner}
+                  isAdmin={isAdmin}
                   onEdit={(p) => {
                     setEditing(p);
                     setModalOpen(true);
@@ -282,7 +273,7 @@ function VaultPage() {
         <VaultFooter count={projects.length} />
       </div>
 
-      {isOwner ? (
+      {isAdmin ? (
         <Button
           onClick={openCreate}
           aria-label="Add project"
