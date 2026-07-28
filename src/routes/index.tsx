@@ -59,12 +59,18 @@ function VaultPage() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return projects.filter((p) => {
+    const list = projects.filter((p) => {
       const matchesCategory = category === "all" || p.category === category;
       const matchesSearch =
         !q ||
         [p.title, p.description, p.tech.join(" ")].join(" ").toLowerCase().includes(q);
       return matchesCategory && matchesSearch;
+    });
+
+    return [...list].sort((a, b) => {
+      if (a.category === "own" && b.category !== "own") return -1;
+      if (a.category !== "own" && b.category === "own") return 1;
+      return b.createdAt - a.createdAt;
     });
   }, [projects, query, category]);
 

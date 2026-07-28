@@ -46,7 +46,9 @@ function rowToProject(row: ProjectRow): Project {
 
 export const listProjects = createServerFn({ method: "GET" }).handler(async () => {
   const db = await getDb();
-  const { rows } = await db.query<ProjectRow>("SELECT * FROM projects ORDER BY created_at DESC");
+  const { rows } = await db.query<ProjectRow>(
+    "SELECT * FROM projects ORDER BY CASE WHEN category = 'own' THEN 0 ELSE 1 END, created_at DESC",
+  );
   return rows.map(rowToProject);
 });
 
