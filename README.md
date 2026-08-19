@@ -50,7 +50,6 @@
 - A [PostgreSQL](https://www.postgresql.org/) database instance (e.g., Supabase, Neon, or local Postgres)
 
 ### Installation
-
 1. **Clone the Repository**
    ```bash
    git clone https://github.com/your-username/project-vault.git
