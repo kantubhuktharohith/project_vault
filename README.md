@@ -15,7 +15,6 @@
 **Project Vault** is an offline-first, database-backed web application designed for developers to organize, showcase, filter, and back up all the projects they have shipped or built. Featuring a sleek, dark retro-terminal interface, Project Vault provides full control over your project links, live deployments, repository URLs, stack tags, and media previews.
 
 ---
-
 ## 🔥 Key Features
 
 - 🖥️ **Retro Terminal Aesthetic**: Modern dark UI inspired by developer terminals, complete with green/cyan accents, crisp typography, and responsive micro-interactions.
