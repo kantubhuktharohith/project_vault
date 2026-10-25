@@ -4,9 +4,9 @@
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?style=flat-square&logo=typescript)
 ![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)
-![TanStack Start](https://img.shields.io/badge/TanStack_Start-1.168-ff4154?style=flat-square)
+![TanStack Start](https://img.shields.io/badge/TanStack_Start-1.169-ff4154?style=flat-square)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.2-38bdf8?style=flat-square&logo=tailwindcss)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pg-336791?style=flat-square&logo=postgresql)
+![SQLite](https://img.shields.io/badge/SQLite-better--sqlite3-003B57?style=flat-square&logo=sqlite)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 
 ---
@@ -22,7 +22,7 @@
 - 🏷️ **Categorization & Real-time Search**: Instant full-text search across titles, descriptions, and technology stacks, with category tab filtering (e.g., *AI Projects*, *Hardcoded Projects*, *All*).
 - 🔒 **Admin Mode**: Secure HMAC cookie-authenticated session system allowing authorized project creation, editing, and deletion.
 - 📦 **Data Import & Export**: One-click JSON backup export and seamless JSON restoring to preserve your portfolio metadata anywhere.
-- ⚡ **Full-Stack Performance**: Powered by **TanStack Start** (SSR/SSG), **TanStack Router**, **React 19**, and **PostgreSQL** via `pg`.
+- ⚡ **Full-Stack Performance**: Powered by **TanStack Start** (SSR/SSG), **TanStack Router**, **React 19**, and **SQLite** via `better-sqlite3`.
 
 ---
 
@@ -33,7 +33,7 @@
 | **Framework** | [TanStack Start](https://tanstack.com/start) / [TanStack Router](https://tanstack.com/router) |
 | **UI Library** | [React 19](https://react.dev/) |
 | **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) + Radix UI Primitives |
-| **Database** | [PostgreSQL](https://www.postgresql.org/) (via `pg` pool with fallback support) |
+| **Database** | [SQLite](https://www.sqlite.org/) (via `better-sqlite3` with auto table creation & WAL mode) |
 | **Icons & Notifications** | [Lucide React](https://lucide.dev/) & [Sonner](https://sonner.embla.com/) |
 | **Validation & State** | [Zod](https://zod.dev/) & custom React hooks |
 | **Build Tooling** | [Vite 8](https://vitejs.dev/) & TypeScript 5 |
@@ -46,7 +46,6 @@
 
 - [Node.js](https://nodejs.org/) (v18.0.0 or higher)
 - [npm](https://www.npmjs.com/) or `bun` / `pnpm`
-- A [PostgreSQL](https://www.postgresql.org/) database instance (e.g., Supabase, Neon, or local Postgres)
 
 ### Installation
 1. **Clone the Repository**
@@ -61,10 +60,10 @@
    ```
 
 3. **Configure Environment Variables**
-   Create a `.env` file in the root directory (or copy from `.env.example`):
+   Create a `.env` file in the root directory:
    ```env
-   # PostgreSQL Connection String
-   DATABASE_URL=postgresql://user:password@host:5432/dbname
+   # SQLite Database Path (defaults to vault.db in project root)
+   DATABASE_PATH=vault.db
 
    # Admin Secret Password for Vault Management
    ADMIN_PASSWORD=your-secure-admin-password
@@ -74,7 +73,7 @@
    ```bash
    npm run dev
    ```
-   Open your browser and navigate to `http://localhost:3000` (or the port specified in terminal output).
+   Open your browser and navigate to `http://localhost:3000` (or the port shown in terminal).
 
 ---
 
@@ -90,33 +89,13 @@ In the project directory, you can run:
 
 ---
 
-<<<<<<< HEAD
-## Development
-=======
-
 ## 🤝 Contributing
->>>>>>> 4f8557064cd4baf6dcd55758462bf4dc8e4a373a
 
 Contributions, issues, and feature requests are welcome!  
 Feel free to check the [issues page](https://github.com/your-username/project-vault/issues).
 
 ---
 
-<<<<<<< HEAD
-### Database
-
-This project uses **SQLite** for local storage (`vault.db`), powered by `better-sqlite3`. The database and tables are created automatically on first run. You can configure the path via `DATABASE_PATH` in `.env`.
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- SQLite (`better-sqlite3`)
-- Tailwind CSS
-=======
 ## 📝 License
 
 This project is [MIT](LICENSE) licensed.
-
->>>>>>> 4f8557064cd4baf6dcd55758462bf4dc8e4a373a
