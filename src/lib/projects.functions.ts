@@ -20,7 +20,7 @@ interface ProjectRow {
   image_url: string;
   tech: string;
   category: string;
-  created_at: string;
+  created_at: string | number;
 }
 
 function rowToProject(row: ProjectRow): Project {
