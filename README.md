@@ -6,13 +6,13 @@
 ![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)
 ![TanStack Start](https://img.shields.io/badge/TanStack_Start-1.169-ff4154?style=flat-square)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.2-38bdf8?style=flat-square&logo=tailwindcss)
-![SQLite](https://img.shields.io/badge/SQLite-better--sqlite3-003B57?style=flat-square&logo=sqlite)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pg-336791?style=flat-square&logo=postgresql)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 
 ---
 ## 🌟 Overview
 
-**Project Vault** is an offline-first, database-backed web application designed for developers to organize, showcase, filter, and back up all the projects they have shipped or built. Featuring a sleek, dark retro-terminal interface, Project Vault provides full control over your project links, live deployments, repository URLs, stack tags, and media previews.
+**Project Vault** is a database-backed web application designed for developers to organize, showcase, filter, and back up all the projects they have shipped or built. Featuring a sleek, dark retro-terminal interface, Project Vault provides full control over your project links, live deployments, repository URLs, stack tags, and media previews.
 
 ---
 ## 🔥 Key Features
@@ -22,7 +22,7 @@
 - 🏷️ **Categorization & Real-time Search**: Instant full-text search across titles, descriptions, and technology stacks, with category tab filtering (e.g., *AI Projects*, *Hardcoded Projects*, *All*).
 - 🔒 **Admin Mode**: Secure HMAC cookie-authenticated session system allowing authorized project creation, editing, and deletion.
 - 📦 **Data Import & Export**: One-click JSON backup export and seamless JSON restoring to preserve your portfolio metadata anywhere.
-- ⚡ **Full-Stack Performance**: Powered by **TanStack Start** (SSR/SSG), **TanStack Router**, **React 19**, and **SQLite** via `better-sqlite3`.
+- ⚡ **Full-Stack Performance**: Powered by **TanStack Start** (SSR/SSG), **TanStack Router**, **React 19**, and **PostgreSQL** via `pg`.
 
 ---
 
@@ -33,7 +33,7 @@
 | **Framework** | [TanStack Start](https://tanstack.com/start) / [TanStack Router](https://tanstack.com/router) |
 | **UI Library** | [React 19](https://react.dev/) |
 | **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) + Radix UI Primitives |
-| **Database** | [SQLite](https://www.sqlite.org/) (via `better-sqlite3` with auto table creation & WAL mode) |
+| **Database** | [PostgreSQL](https://www.postgresql.org/) (via `pg` pool with SSL & auto table creation) |
 | **Icons & Notifications** | [Lucide React](https://lucide.dev/) & [Sonner](https://sonner.embla.com/) |
 | **Validation & State** | [Zod](https://zod.dev/) & custom React hooks |
 | **Build Tooling** | [Vite 8](https://vitejs.dev/) & TypeScript 5 |
@@ -46,6 +46,7 @@
 
 - [Node.js](https://nodejs.org/) (v18.0.0 or higher)
 - [npm](https://www.npmjs.com/) or `bun` / `pnpm`
+- A PostgreSQL database (e.g. Supabase, Neon, or local PostgreSQL instance)
 
 ### Installation
 1. **Clone the Repository**
@@ -62,8 +63,8 @@
 3. **Configure Environment Variables**
    Create a `.env` file in the root directory:
    ```env
-   # SQLite Database Path (defaults to vault.db in project root)
-   DATABASE_PATH=vault.db
+   # PostgreSQL Connection String (e.g. Supabase, Neon, or local)
+   DATABASE_URL=postgresql://user:password@host:5432/dbname
 
    # Admin Secret Password for Vault Management
    ADMIN_PASSWORD=your-secure-admin-password

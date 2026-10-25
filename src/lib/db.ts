@@ -1,39 +1,21 @@
-import Database from "better-sqlite3";
-import path from "node:path";
-import fs from "node:fs";
+import pg from "pg";
 
-let dbInstance: Database.Database | null = null;
+let pool: pg.Pool | null = null;
+let initialized = false;
 
-export interface DbQueryResult<T = unknown> {
-  rows: T[];
-  rowCount: number;
-}
+export async function getDb(): Promise<pg.Pool> {
+  if (!pool) {
+    const connectionString = process.env.DATABASE_URL;
+    pool = new pg.Pool({
+      connectionString,
+      ssl: connectionString?.includes("localhost")
+        ? false
+        : { rejectUnauthorized: false },
+    });
+  }
 
-export interface DbClient {
-  raw: Database.Database;
-  query<T = unknown>(sql: string, params?: unknown[]): Promise<DbQueryResult<T>>;
-}
-
-export async function getDb(): Promise<DbClient> {
-  if (!dbInstance) {
-    const rawPath = process.env.DATABASE_PATH || process.env.DATABASE_URL || "vault.db";
-    // If DATABASE_URL contains an old postgres URL, fall back to vault.db
-    const resolvedPath =
-      rawPath.startsWith("postgres://") || rawPath.startsWith("postgresql://")
-        ? path.resolve(process.cwd(), "vault.db")
-        : path.isAbsolute(rawPath)
-          ? rawPath
-          : path.resolve(process.cwd(), rawPath.replace(/^file:/, ""));
-
-    const dir = path.dirname(resolvedPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    dbInstance = new Database(resolvedPath);
-    dbInstance.pragma("journal_mode = WAL");
-
-    dbInstance.exec(`
+  if (!initialized) {
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS projects (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
@@ -43,26 +25,11 @@ export async function getDb(): Promise<DbClient> {
         image_url TEXT NOT NULL DEFAULT '',
         tech TEXT NOT NULL DEFAULT '[]',
         category TEXT NOT NULL DEFAULT 'own',
-        created_at INTEGER NOT NULL
+        created_at BIGINT NOT NULL
       );
     `);
+    initialized = true;
   }
 
-  return {
-    raw: dbInstance,
-    async query<T = unknown>(sql: string, params: unknown[] = []): Promise<DbQueryResult<T>> {
-      // Support both SQLite '?' and PostgreSQL '$1, $2, ...' placeholders
-      const normalizedSql = sql.replace(/\$\d+/g, "?");
-      const stmt = dbInstance!.prepare(normalizedSql);
-
-      const isSelect = /^\s*SELECT/i.test(normalizedSql);
-      if (isSelect) {
-        const rows = stmt.all(...params) as T[];
-        return { rows, rowCount: rows.length };
-      } else {
-        const info = stmt.run(...params);
-        return { rows: [], rowCount: info.changes };
-      }
-    },
-  };
+  return pool;
 }
